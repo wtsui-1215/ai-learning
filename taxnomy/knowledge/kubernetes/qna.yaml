@@ -1,0 +1,5 @@
+version: 3
+domain: Kubernetes Kubectl v1.30 Commands
+created_by: wtsui-1215, ssugita
+document_outline: |
+  Kubectl v1.30 commands, Basic Kubernetes commands, Manage workload, Inspect, Create, Edit, Delete Pods, App Management, Cluster Management
