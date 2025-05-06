@@ -37,3 +37,211 @@ path/to/bar/file2.txt`
           What happened if the config map is created based on a file?
         answer: |
           When creating a config map based on a file, the key will default to the basename of the file, and the value will default to the file content. If the basename is an invalid key, you may specify an alternate key.
+          
+  - context: |
+      ## ingress
+
+      Create a single ingress called 'simple' that directs requests to foo.com/bar to svc # svc1:8080 with a tls secret "my-cert"
+
+      kubectl create ingress simple --rule="foo.com/bar=svc1:8080,tls=my-cert"
+
+      Create a catch all ingress of "/path" pointing to service svc:port and Ingress Class as "otheringress"
+
+      kubectl create ingress catch-all --class=otheringress --rule="/path=svc:port"
+
+      Create an ingress with two annotations: ingress.annotation1 and ingress.annotations2
+
+      kubectl create ingress annotated --class=default --rule="foo.com/bar=svc:port" \ --annotation ingress.annotation1=foo \ --annotation ingress.annotation2=bla
+
+      Create an ingress with the same host and multiple paths kubectl create ingress multipath --class=default \
+
+      --rule="foo.com/=svc:port" \
+
+      --rule="foo.com/admin/=svcadmin:portadmin"
+
+      Create an ingress with multiple hosts and the pathType as Prefix kubectl create ingress ingress1 --class=default \
+
+      --rule="foo.com/path*=svc:8080" \
+
+      --rule="bar.com/admin*=svc2:http"
+
+      Create an ingress with TLS enabled using the default ingress certificate and different path types kubectl create ingress ingtls --class=default \
+
+      --rule="foo.com/=svc:https,tls" \
+
+      --rule="foo.com/path/subpath*=othersvc:8080"
+
+      Create an ingress with TLS enabled using a specific secret and pathType as Prefix kubectl create ingress ingsecret --class=default \ --rule="foo.com/*=svc:8080,tls=secret1"
+
+      Create an ingress with a default backend kubectl create ingress ingdefault --class=default \ --default-backend=defaultsvc:http \ --rule="foo.com/*=svc:8080,tls=secret1"
+
+      Create an ingress with the specified name.
+
+      ## Usage
+      $ kubectl create ingress NAME --rule=host/path=service:port[,tls[=secret]]
+    questions_and_answers:
+      - question: |
+          According to the provided context, what is the command to create an ingress named 'simple' that routes traffic from foo.com/bar to a service named svc1 on port 8080, and also configures TLS using a secret named my-cert?
+        answer: |
+          The command to create an ingress named 'simple' that directs requests from foo.com/bar to the service svc1 on port 8080 with TLS configured using the secret my-cert is: kubectl create ingress simple --rule="foo.com/bar=svc1:8080,tls=my-cert". The --rule flag specifies the routing and TLS configuration.
+      - question: |
+          How can you create an ingress that handles all traffic to the path /path and directs it to a service named svc on a specific port, while also assigning the Ingress Class as otheringress?
+        answer: |
+          To create a catch-all ingress for the path /path pointing to a service svc on a given port and having the Ingress Class set to otheringress, you would use the command: kubectl create ingress catch-all --class=otheringress --rule="/path=svc:port". The --class flag is used to specify the Ingress Class.
+      - question: |
+          If you need to create an ingress named annotated with two specific annotations, ingress.annotation1 set to foo and ingress.annotation2 set to bla, while also routing traffic from foo.com/bar to a service svc on a given port with the default Ingress Class, what is the necessary kubectl command?
+        answer: |
+          The kubectl command to create an ingress named annotated with the annotations ingress.annotation1=foo and ingress.annotation2=bla, and a rule to forward traffic from foo.com/bar to svc:port using the default Ingress Class is: kubectl create ingress annotated --class=default --rule="foo.com/bar=svc:port" --annotation ingress.annotation1=foo --annotation ingress.annotation2=bla. The --annotation flag is used to specify key-value pairs for the ingress annotations.
+    
+  - context: |
+      ## deployment
+
+      Create a deployment named my-dep that runs the busybox image kubectl create deployment my-dep --image=busybox
+
+      Create a deployment with a command kubectl create deployment my-dep --image=busybox -- date
+
+      Create a deployment named my-dep that runs the nginx image with 3 replicas kubectl create deployment my-dep --image=nginx --replicas=3
+
+      Create a deployment named my-dep that runs the busybox image and expose port 5701
+
+      kubectl create deployment my-dep --image=busybox --port=5701
+
+      Create a deployment with the specified name.
+
+      ## Usage
+
+      $ kubectl create deployment NAME --image=image -- [COMMAND] [args...]
+
+      ## Flags
+
+      | Name                          | Shorthand   | Default         | Usage                                                                                                                                                                                                               |
+      |-------------------------------|-------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+      | allow- missing- template-keys |             | true            | If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats.                                                                     |
+      | dry-run                       |             | none            | Must be "none", "server", or "client". If client strategy, only print the object that would be sent, without sending it. If server strategy, submit server-side request without persisting the resource.            |
+      | field-manager                 |             | kubectl- create | Name of the manager used to track field ownership.                                                                                                                                                                  |
+      | image                         |             | []              | Image names to run.                                                                                                                                                                                                 |
+      | output                        | o           |                 | Output format. One of: json|yaml|name|go-template|go- template-file|template|templatefile|jsonpath|jsonpath-as- json|jsonpath-file.                                                                                 |
+      | port                          |             | -1              | The port that this container exposes.                                                                                                                                                                               |
+      | replicas                      | r           | 1               | Number of replicas to create. Default is 1.                                                                                                                                                                         |
+      | save-config                   |             | false           | If true, the configuration of current object will be saved in its annotation. Otherwise, the annotation will be unchanged. This flag is useful when you want to perform kubectl apply on this object in the future. |
+      | show- managed- fields         |             | false           | If true, keep the managedFields when printing objects in JSON or YAML format.                                                                                                                                       |
+      | template                      |             |                 | Template string or path to template file to use when - o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/ #pkg-overview].                            |
+      | validate                      |             | true            | If true, use a schema to validate the input before sending it                                                                                                                                                       |
+    questions_and_answers:
+      - question: |
+          What is the fundamental kubectl command to create a deployment, and what are the minimum required parameters based on the provided examples?
+        answer: |
+          The fundamental kubectl command to create a deployment is kubectl create deployment. Based on the initial examples, the minimum required parameters are a NAME for the deployment (e.g., my-dep) and the --image flag specifying the container image to run (e.g., busybox).
+      - question: |
+          If you want to create a deployment named web-app that runs the nginx image and ensures that there are always five instances of the pod running, what kubectl create deployment command would you use, according to the provided flags?
+        answer: |
+         To create a deployment named web-app running the nginx image with five replicas, you would use the command: kubectl create deployment web-app --image=nginx --replicas=5. The --replicas flag allows you to define the desired number of pod instances.
+      - question: |
+          Suppose you need to create a deployment named service-monitor that uses the busybox image and you want the containers in this deployment to expose port 9090. What is the kubectl create deployment command to achieve this, and what is the default value for the --port flag if it is not specified?
+        answer: |
+          To create a deployment named service-monitor using the busybox image and exposing port 9090, the kubectl create deployment command would be: kubectl create deployment service-monitor --image=busybox --port=9090. According to the flags table, the default value for the --port flag is -1, indicating that if no port is specified, the container will not be explicitly exposed by the deployment configuration itself (though the image might still expose ports).
+
+  - context: |
+      ## Usage
+
+
+
+      $ kubectl create role NAME --verb=verb --resource=resource.group/subresource [--resourcename=resourcename] [--dry-run=server|client|none]
+
+
+
+      ## Flags
+
+
+
+      | Name | Shorthand Default | Usage |
+
+      |-------------------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+      | allow- missing- template-keys | true | If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats. |
+
+      | dry-run | none | Must be "none", "server", or "client". If client strategy, only print the object that would be sent, without sending it. If server strategy, submit server-side request without persisting the resource. |
+
+      | field-manager | kubectl- create | Name of the manager used to track field ownership. |
+
+      | output | o | Output format. One of: json|yaml|name|go-template|go- template-file|template|templatefile|jsonpath|jsonpath-as- json|jsonpath-file. |
+
+      | resource | [] | Resource that the rule applies to |
+
+      | resource- name | [] | Resource in the white list that the rule applies to, repeat this flag for multiple items |
+
+      | save-config | false | If true, the configuration of current object will be saved in its annotation. Otherwise, the annotation will be unchanged. This flag is useful when you want to perform kubectl apply on this object in the future. |
+
+      | | false | If true, keep the managedFields when printing objects in JSON or YAML format. |
+
+
+
+      | Name | Shorthand Default | Usage |
+
+      |-----------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+      | show- managed- fields | | |
+
+      | template | | Template string or path to template file to use when - o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/template/ #pkg-overview]. |
+
+      | validate | true | If true, use a schema to validate the input before sending it |
+
+      | verb | [] | Verb that applies to the resources contained in the rule |
+    questions_and_answers:
+      - question: |
+          According to the usage section, what are the three mandatory parameters required when creating a Kubernetes role using the kubectl create role command?
+        answer: |
+          Based on the usage $ kubectl create role NAME --verb=verb --resource=resource.group/subresource [...], the three mandatory parameters when creating a Kubernetes role are NAME to specify the name of the role, --verb to define the action(s) permitted on the resources, and --resource to specify the target Kubernetes resource(s) that the role's permissions apply to.
+      - question: |
+           If you want to create a role named pod-reader that allows the get, list, and watch verbs on pods within the core API group, what would the kubectl create role command look like based on the provided flags?
+        answer: |
+         To create a role named pod-reader with permissions to get, list, and watch pods in the core API group, the kubectl create role command would be: kubectl create role pod-reader --verb=get --verb=list --verb=watch --resource=pods. The --verb flag can be repeated to specify multiple allowed actions.
+      - question: |
+           What is the function of the --resource-name flag when creating a Kubernetes role, and how does it differ from the --resource flag?
+        answer: |
+          The --resource-name flag is used to specify particular instances of a resource that the defined rule applies to. This allows for more granular control by restricting the permissions to specific named resources. In contrast, the --resource flag specifies the general type of Kubernetes resource (and optionally its API group and subresource) that the rule applies to, potentially encompassing all resources of that type within the specified scope. You can use the --resource-name flag multiple times to specify a whitelist of resource instances.
+
+  - context: |
+      ## rolebinding
+
+      Create a role binding for user1, user2, and group1 using the admin cluster role kubectl create rolebinding admin --clusterrole=admin --user=user1 --user=user2 --group=group 1
+
+      Create a role binding for a particular role or cluster role.
+
+      ## Usage
+
+      $ kubectl create rolebinding NAME --clusterrole=NAME|--role=NAME [--user=username] [-group=groupname] [--serviceaccount=namespace:serviceaccountname] [--dry-run=server| client|none]
+
+      ## Flags
+
+      | Name                         | Shorthand Default   | Usage                                                                                                                                                                                                               |
+      |------------------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+      | allow-missing- template-keys | true                | If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats.                                                                     |
+      | clusterrole                  |                     | ClusterRole this RoleBinding should reference                                                                                                                                                                       |
+      | dry-run                      | none                | Must be "none", "server", or "client". If client strategy, only print the object that would be sent, without sending it. If server strategy, submit server-side request without persisting the resource.            |
+      | field-manager                | kubectl- create     | Name of the manager used to track field ownership.                                                                                                                                                                  |
+      | group                        | []                  | Groups to bind to the role                                                                                                                                                                                          |
+      | output                       | o                   | Output format. One of: json|yaml|name|go-template|go- template-file|template|templatefile|jsonpath|jsonpath- as-json|jsonpath-file.                                                                                 |
+      | role                         |                     | Role this RoleBinding should reference                                                                                                                                                                              |
+      | save-config                  | false               | If true, the configuration of current object will be saved in its annotation. Otherwise, the annotation will be unchanged. This flag is useful when you want to perform kubectl apply on this object in the future. |
+      | serviceaccount               | []                  |                                                                                                                                                                                                                     |
+
+      | Name                 | Shorthand Default   | Usage                                                                                                                                                                                    |
+      |----------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+      |                      |                     | Service accounts to bind to the role, in the format <namespace>:<name>                                                                                                                   |
+      | show-managed- fields | false               | If true, keep the managedFields when printing objects in JSON or YAML format.                                                                                                            |
+      | template             |                     | Template string or path to template file to use when - o=go-template, -o=go-template-file. The template format is golang templates [http://golang.org/pkg/text/ template/#pkg-overview]. |
+      | validate             | true                | If true, use a schema to validate the input before sending it                                     |
+    questions_and_answers:
+      - question: |
+          What are the two mutually exclusive flags that allow you to specify the role or cluster role to which a RoleBinding should grant permissions, as indicated in the kubectl create rolebinding usage?
+        answer: |
+          The two mutually exclusive flags that allow you to specify the role or cluster role for a RoleBinding are --clusterrole and --role. You would use --clusterrole to bind to a cluster-wide ClusterRole, or --role to bind to a Role within a specific namespace.
+      - question: |
+          Based on the provided example, how would you create a RoleBinding named admin-binding that grants the permissions of the admin ClusterRole to a user named user1, another user named user2, and a group named group1?
+        answer: |
+         To create a RoleBinding named admin-binding that grants the permissions of the admin ClusterRole to the specified users and group, you would use the command: kubectl create rolebinding admin-binding --clusterrole=admin --user=user1 --user=user2 --group=group1. The --clusterrole flag specifies the ClusterRole to bind, and the --user and --group flags are used to list the subjects receiving the permissions.
+      - question: |
+          Besides users and groups, what other type of subject can be bound to a role or cluster role using the kubectl create rolebinding command, and what is the format required to specify this subject?
+        answer: |
+          In addition to users and groups, ServiceAccounts can also be bound to a role or cluster role using the kubectl create rolebinding command. The format required to specify a ServiceAccount is <namespace>:<serviceaccountname>, where <namespace> is the namespace in which the ServiceAccount resides and <serviceaccountname> is the name of the ServiceAccount. This is indicated by the --serviceaccount flag in the usage and flags sections.
